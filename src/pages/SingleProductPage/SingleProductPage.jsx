@@ -15,6 +15,7 @@ const SingleProductPage = () => {
     return (
         <div>
             <SingleProductCard 
+            id={id}
              product={product}
              img={product.img}
              title={product.title}

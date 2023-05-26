@@ -2,10 +2,24 @@ import styles from "./singleproductcard.module.css";
 import React, { useState } from "react";
 import { addTocart } from "../../redux/cartSlice";
 import { useDispatch } from "react-redux";
+import productService from "../../service/product";
+import { useNavigate } from "react-router-dom";
 
-const SingleProductCard = ({ img, title, price, descr, product }) => {
+const SingleProductCard = ({ img, title, price, descr, product, id }) => {
     const [quantity, setQuantity] = useState(1);
     const dispatch = useDispatch();
+    const navigate = useNavigate()
+
+const deleteProduct = () => {
+    productService.deleteProduct(id)
+    .then(res => {
+        console.log(res)
+        navigate("/store")
+    })
+    .catch(err => {
+        console.log(err)
+    })
+}
 
     return (
         <div className={styles.card}>
@@ -44,6 +58,10 @@ const SingleProductCard = ({ img, title, price, descr, product }) => {
                     </div>
                 </div>
             </div>
+            <div className={styles.control}>
+                        <button className={styles.delete}  onClick={deleteProduct}>delete</button>
+                        <button className={styles.update}>update</button>
+                </div>
         </div>
     );
 };

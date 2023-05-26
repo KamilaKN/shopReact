@@ -1,21 +1,58 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./checkout.module.css";
 import Breadcrumbs from "../Breadcrumbs/Breadcrumbs";
-import {  useSelector } from "react-redux";
-import { CardElement } from "@stripe/react-stripe-js";
+import { useSelector } from "react-redux";
+import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
+import axios from "axios";
+
+const cartStyle = {
+    style: {
+        base: {
+            color: "black",
+            fontSize: "24px",
+            "::placeholder": {
+                color: "black",
+            },
+        },
+    },
+};
 
 const CheckoutForm = () => {
-  const sum = useSelector(state => state.cart.sum)
+    const sum = useSelector((state) => state.cart.sum);
+    const stripe = useStripe();
+    const elements = useElements();
+    const [clientSecret, setClientSecret] = useState("");
+
+    useEffect(() => {
+        axios
+            .post(
+                "https://whispering-river-87788.herokuapp.com/api/create-payment-intent",
+                { total: sum }
+            )
+            .then((res) => setClientSecret(res.data.clientSecret));
+    }, []);
+
+    const pay = (e) => {
+        e.preventDefault();
+        stripe
+            .confirmCardPayment(clientSecret, {
+                payment_method: {
+                    card: elements.getElement(CardElement),
+                },
+            })
+            .then((res) => console.log(res));
+    };
+
     return (
         <>
             <Breadcrumbs />
             <h1>Сумма оплать: {sum}</h1>
             <div className={styles.wrapper}>
-                <form className={styles.card}>
+                <form className={styles.card} onSubmit={pay}>
                     <div>
-                      <CardElement />
+                        <CardElement options={cartStyle} />
                     </div>
-                    <button>Pay</button>
+                    <button type="submiit">Pay</button>
                 </form>
 
                 <div className={styles["product-wrapper"]}>

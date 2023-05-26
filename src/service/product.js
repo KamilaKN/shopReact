@@ -11,7 +11,12 @@ const getProduct = (id) => {
     return axios.get(`${URLproduct}/${id}`)
 }
 
+const deleteProduct = (id) => {
+    return axios.delete(`https://whispering-river-87788.herokuapp.com/api/product/${id}`)
+}
+
 export default { 
     getProducts: getProducts,
-    getProduct: getProduct
+    getProduct: getProduct,
+    deleteProduct: deleteProduct
 };
